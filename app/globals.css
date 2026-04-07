@@ -1,0 +1,86 @@
+/* app/globals.css */
+
+@import "tailwindcss";
+@import 'rc-slider/assets/index.css'; 
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-black;
+  }
+}
+
+/* Custom Component Classes */
+
+.my-custom-button {
+  @apply text-blue-500 font-bold;
+}
+
+.text_header {
+  @apply text-3xl font-semibold;
+}
+
+.navbar {
+  @apply py-4 bg-white shadow-lg;
+}
+
+.container {
+  @apply mx-auto px-4;
+}
+
+.custome_flex_item {
+  @apply flex justify-between items-center;
+}
+
+.flex-gap {
+  @apply flex gap-4;
+}
+
+.custom_input {
+  @apply h-12 w-full border text-black bg-gray-100 rounded-md p-3 text-base;
+  @apply placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2;
+  @apply focus-visible:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50;
+  @apply group-hover/input:shadow-none; 
+  @apply pl-10;
+}
+
+.dropdown-menu {
+  @apply absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg font-medium;
+}
+
+.custom_nav_for_Wshilist {
+  @apply block px-4 text-base text-gray-700 hover:bg-gray-100;
+}
+
+.custom_nav_for_button {
+   @apply block px-4 text-base text-gray-700 hover:bg-gray-100 w-full text-left;
+}
+
+.icon-button {
+  @apply bg-transparent inline-flex items-center cursor-pointer;
+}
+
+.checkbox-button-label {
+  @apply inline-flex items-center text-gray-700 border border-gray-700 rounded-lg;
+  @apply px-3 py-2 cursor-pointer transition-all;
+  @apply peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600;
+}
+
+.accordion-button {
+  /* इथला डुप्लिकेट कोड काढून टाकला आहे */
+  @apply flex justify-between items-center w-full text-xl font-semibold cursor-pointer;
+}
+
+.product-type-label {
+  @apply rounded-lg border border-gray-500 p-2;
+}
+
+.custom-btn {
+  @apply rounded font-medium text-base leading-5 lg:leading-6 bg-blue-700;
+  /* खालील ओळीतली 'space' काढून टाकली आहे */
+  @apply hover:shadow-xl disabled:pointer-events-none disabled:bg-gray-50 disabled:text-black/50;
+  @apply px-5 py-3 text-white;
+  @apply w-full
+}
+.custom-outline-btn {
+  @apply bg-transparent text-black border border-gray-700 ;
+}
