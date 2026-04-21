@@ -1,7 +1,7 @@
 import "../globals.css";
 import { Suspense } from 'react';
-import { ProductProvider } from "@/app/components/layout/ProductContext";
-import Header from "@/app/components/layout/Header";
+import { ProductProvider } from "@/components/layout/ProductContext";
+import Header from "@/components/layout/Header";
 import { Geist, Geist_Mono } from "next/font/google";
 
 // १. Standard Fonts लोड करणे

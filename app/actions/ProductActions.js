@@ -1,5 +1,5 @@
 "use server"
-import { objectQueryString } from "../components/lib/utils";
+import { objectQueryString } from"@/components/lib/utils";
 
 const ADMIN_URL = "http://127.0.0.1:3001"; // IP वापरणे सुरक्षित आहे
 

@@ -4,8 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
 import { createCheckoutSession } from '../../actions/stripAction'; 
 // १. हा Import विसरू नकोस:
-import { useProductContext } from '../../../app/components/layout/ProductContext.jsx'; 
-
+ import { useProductContext } from '@/components/layout/ProductContext';
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 const Checkout = () => {

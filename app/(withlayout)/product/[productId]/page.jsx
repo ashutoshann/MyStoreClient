@@ -1,5 +1,6 @@
-import Product from "../../../Screens/product/index.jsx";
-import { getProductById } from "@/app/actions/ProductActions";
+// जुनं काढून हे टाक:
+import Product from "../../../Screens/Product/index";
+import { getProductById } from "../../../actions/ProductActions";
 
 export default async function ProductPage({ params }) {
   // १. फोल्डरचं नाव [productId] असेल तर इथे हुबेहूब 'productId' च लिहा ✅

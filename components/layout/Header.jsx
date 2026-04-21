@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import React, { useState, useRef, useEffect } from 'react'; 
-import { SearchIcon, CartIcon, UserIcon } from '@/app/components/icon';
+import { SearchIcon, CartIcon, UserIcon } from '@/components/icon';
 import Input from '../../components/ui/input';
 import { useProductContext } from '../layout/ProductContext';
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Cookies from 'js-cookie'; 
-import { logoutAction } from "../../actions/authAction";
+import { logoutAction } from "../../app/actions/authAction.js";
 
 const Header = () => {
   const router = useRouter();

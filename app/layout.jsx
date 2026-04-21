@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ProductProvider } from "./components/layout/ProductContext.jsx"; // पाथ तपासा
+import { ProductProvider } from "../components/layout/ProductContext"; // पाथ तपासा
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

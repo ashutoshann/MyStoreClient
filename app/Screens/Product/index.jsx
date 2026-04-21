@@ -2,24 +2,22 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { StarIcon } from '../../components/icon.jsx'
-import { useProductContext } from '../../components/layout/ProductContext.jsx'
+import { useRouter } from 'next/navigation' 
+// १. सुधारलेले पाथ्स (Alias वापरून) ✅ - आता एरर येणार नाही
+import { StarIcon } from '@/components/icon'
+import { useProductContext } from '@/components/layout/ProductContext'
 
-// १. इथे 'product' ऐवजी 'data' करा कारण page.jsx मधून 'data' येतोय ✅
 const Product = ({ product }) => {
+  const router = useRouter(); 
   const { addProductToCart, removeProductFromCart, cartItems } = useProductContext();
   const [selectedSize, setSelectedSize] = useState('M');
   const [imgError, setImgError] = useState(false);
 
-  // प्रॉडक्टला सोयीसाठी 'product' व्हेरिएबलमध्ये स्टोअर करूया
-  
-
-  // २. जर डेटा आला नसेल तर लोडिंग दाखवा
+  // प्रॉडक्ट माहिती नसेल तर लोडिंग दाखवा
   if (!product) {
     return (
       <div className="p-20 text-center">
         <p className="text-xl font-bold">प्रॉडक्ट माहिती लोड होत आहे...</p>
-        <p className="text-sm text-gray-500">कृपया थोडा वेळ थांबा किंवा रिफ्रेश करा.</p>
       </div>
     );
   }
@@ -27,12 +25,13 @@ const Product = ({ product }) => {
   const isProductInCart = cartItems?.some((item) => item.id === product.id);
   
   // ३. इमेज पाथ लॉजिक
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001"; // तुमचा पोर्ट तपासा
-  const finalImgSrc = (imgError || !product?.image) 
-    ? "https://placehold.co/400x400?text=No+Image" 
-    : product.image.startsWith('http') 
-      ? product.image 
-      : `${BASE_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`;
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  const getImgSrc = () => {
+    if (imgError || !product?.image) return "https://placehold.co/400x400?text=No+Image";
+    if (product.image.startsWith('http')) return product.image;
+    const cleanPath = product.image.startsWith('/') ? product.image : `/${product.image}`;
+    return `${BASE_URL}${cleanPath}`;
+  };
 
   const handleCartItem = () => {
     if (isProductInCart) {
@@ -46,18 +45,29 @@ const Product = ({ product }) => {
     }
   }
 
+  // ४. Buy Now फंक्शन
+  const handleBuyNow = () => {
+    if (product?.currentStock > 0) {
+      if (!isProductInCart) {
+        addProductToCart({
+          ...product,
+          quantity: 1,
+          size: selectedSize
+        });
+      }
+      router.push(`/checkout?productId=${product.id}`);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto my-10 p-4">
-       {/* Debugging साठी हे टर्मिनलमध्ये किंवा कन्सोलमध्ये बघण्यासाठी */}
-       {/* {console.log("Product Data in UI:", product)} */}
-
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-0 shadow-lg">
         
         {/* इमेज विभाग */}
         <div className="bg-[#F3F4F6] flex items-center justify-center p-12 min-h-[400px]">
           <div className="relative w-full h-[350px] flex items-center justify-center">
             <Image 
-              src={finalImgSrc} 
+              src={getImgSrc()} 
               alt={product?.name || "Product Image"} 
               fill
               className="object-contain p-4"
@@ -138,11 +148,13 @@ const Product = ({ product }) => {
               >
                 {isProductInCart ? "Remove from Cart" : "Add to Cart"}
               </button>
+
               <button 
+                onClick={handleBuyNow}
                 disabled={product?.currentStock <= 0}
                 className={`flex-1 py-3 rounded-md font-semibold shadow-md transition-colors ${
                    product?.currentStock > 0 
-                   ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                   ? 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95' 
                    : 'bg-gray-400 text-white cursor-not-allowed'
                 }`}
               >

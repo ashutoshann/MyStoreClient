@@ -1,9 +1,13 @@
 "use client";
+
 import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
-import { createCheckoutSession } from '../../../app/actions/stripAction.js'; // पाथ तपासा
-import { useProductContext } from '../../../app/components/layout/ProductContext.jsx'; 
+
+// पाथ्स एकदम अचूक सेट केले आहेत (Relative Paths) ✅
+// import { createCheckoutSession } from '../../../actions/stripAction.js'; 
+import { createCheckoutSession } from '../../actions/stripAction.js';
+import { useProductContext } from '../../../components/layout/ProductContext.jsx'; 
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -14,23 +18,32 @@ const CheckoutPage = () => {
 
     useEffect(() => {
         const fetchSecret = async () => {
+            // जर कार्ट रिकामी असेल तर पुढे जाऊ नका
             if (!cartItems || cartItems.length === 0) return;
 
             try {
-                // सर्व व्हॅल्यूज डायनॅमिक पाठवणे
+                // पेमेंटसाठी लागणारी डायनॅमिक कॉन्फिगरेशन
                 const dynamicConfig = {
-                    customerEmail: customerData?.email,
+                    customerEmail: customerData?.email || "",
                     currency: "inr",
                     allowedCountries: ["IN"],
-                    originUrl: window.location.origin
+                    originUrl: typeof window !== "undefined" ? window.location.origin : ""
                 };
 
+                // सर्व्हर ॲक्शन कॉल करून सेशन तयार करणे
                 const data = await createCheckoutSession(cartItems, dynamicConfig);
-                setClientSecret(data.clientSecret);
+                
+                if (data?.clientSecret) {
+                    setClientSecret(data.clientSecret);
+                } else {
+                    throw new Error("Client Secret सापडला नाही.");
+                }
             } catch (err) {
-                setError(err.message);
+                console.error("Checkout Error:", err);
+                setError(err.message || "पेमेंट गेटवे लोड करताना अडचण आली.");
             }
         };
+
         fetchSecret();
     }, [cartItems, customerData]);
 
@@ -44,12 +57,14 @@ const CheckoutPage = () => {
                     </p>
                 </header>
 
+                {/* एरर मेसेज विभाग */}
                 {error && (
                     <div className="p-4 mb-6 bg-red-50 text-red-600 rounded-2xl font-bold border border-red-100 italic">
                         ⚠️ {error}
                     </div>
                 )}
 
+                {/* Stripe Checkout Form */}
                 {clientSecret ? (
                     <div className="rounded-2xl overflow-hidden shadow-inner border border-gray-50">
                         <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
@@ -57,6 +72,7 @@ const CheckoutPage = () => {
                         </EmbeddedCheckoutProvider>
                     </div>
                 ) : (
+                    /* लोडिंग स्टेट */
                     <div className="py-32 text-center space-y-4">
                         <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
                         <p className="text-gray-400 font-bold animate-pulse text-lg">

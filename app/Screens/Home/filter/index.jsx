@@ -1,17 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, Suspense } from 'react'; 
 import { useRouter, useSearchParams } from 'next/navigation';
-import Accordion from '@/app/components/ui/Accordion';
-import PriceRangeSilder from '@/app/components/PriceRangeSilder';
-import { objectQueryString } from '@/app/components/lib/utils';
+// १. @/ पाथ वापरल्यामुळे फोल्डर कुठेही हलवलं तरी एरर येणार नाही ✅
+import Accordion from '@/components/ui/Accordion';
+import PriceRangeSilder from '@/components/PriceRangeSilder';
+import { objectQueryString } from '@/components/lib/utils';
 
-const FilterSection = ({ productTypes }) => {
+// २. मुख्य लॉजिकला वेगळं केलं जेणेकरून Suspense वापरता येईल
+const FilterContent = ({ productTypes }) => {
   const router = useRouter();
   const searchParamsHook = useSearchParams();
   const currentParams = Object.fromEntries(searchParamsHook.entries());
 
-  // --- 1. LOCAL STATE (For Smooth Slider) ---
+  // --- LOCAL STATE (For Smooth Slider) ---
   const [localPrice, setLocalPrice] = useState([
     Number(currentParams.minPrice) || 0,
     Number(currentParams.maxPrice) || 1000
@@ -24,7 +26,7 @@ const FilterSection = ({ productTypes }) => {
     ]);
   }, [currentParams.minPrice, currentParams.maxPrice]);
 
-  // --- 2. DATA ARRAYS ---
+  // --- DATA ARRAYS ---
   const sortByItems = [
     { label: "All", value: "all" },
     { label: "Price: High to Low", value: "-sellPrice" },
@@ -46,7 +48,7 @@ const FilterSection = ({ productTypes }) => {
     { label: "Out of Stock", value: "outofstock" }
   ];
 
-  // --- 3. LOGIC FUNCTIONS ---
+  // --- LOGIC FUNCTIONS ---
   const updateSearchParams = (newParamsArray) => {
     let updatedParams = { ...currentParams };
     newParamsArray.forEach(param => {
@@ -78,22 +80,22 @@ const FilterSection = ({ productTypes }) => {
     updateSearchParams([{ minPrice: value[0] }, { maxPrice: value[1] }]);
   };
 
-  // --- 4. RENDER ---
   const openAccordion = currentParams.openAccordion?.split(",") || [];
 
   return (
     <div className='rounded-lg shadow-lg p-5 bg-white h-fit w-full max-w-md'>
       <h1 className='text-2xl mb-6 font-semibold text-gray-800'>Filters</h1>
 
-<Accordion
-  title="category"
-  isOpened={openAccordion.includes("productTypeId")}
-  type="productTypeId"
-  handleAccordion={handleAccordion}
-  items={productTypes}
-  selectedValue={currentParams.productTypeId || "all"} // इथे "all" करा
-  onChange={(val) => handleChangeFilter("productTypeId", val)}
-/>
+      <Accordion
+        title="Category"
+        isOpened={openAccordion.includes("productTypeId")}
+        type="productTypeId"
+        handleAccordion={handleAccordion}
+        items={productTypes}
+        selectedValue={currentParams.productTypeId || "all"}
+        onChange={(val) => handleChangeFilter("productTypeId", val)}
+      />
+
       <Accordion
         title="Sort By"
         isOpened={openAccordion.includes("sortBy")}
@@ -147,6 +149,15 @@ const FilterSection = ({ productTypes }) => {
         onChange={(val) => handleChangeFilter("inStock", val)}
       />
     </div>
+  );
+};
+
+// ३. मुख्य एक्सपोर्टमध्ये Suspense रॅप केला आहे जेणेकरून Vercel बिल्ड एरर येणार नाही ✅
+const FilterSection = (props) => {
+  return (
+    <Suspense fallback={<div className="p-5 text-gray-500">Loading Filters...</div>}>
+      <FilterContent {...props} />
+    </Suspense>
   );
 };
 

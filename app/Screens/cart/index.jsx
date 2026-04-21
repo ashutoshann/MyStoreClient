@@ -2,8 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { StarIcon, MinusIcon, PlusIcon, DeleteIcon } from '../../components/icon.jsx';
-import { useProductContext } from '../../../app/components/layout/ProductContext.jsx'
+import { StarIcon, MinusIcon, PlusIcon, DeleteIcon } from '@/components/icon';import { useProductContext } from '@/components/layout/ProductContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // ✅ हे वापरा
 const Cart = () => {
